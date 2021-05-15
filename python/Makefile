@@ -62,6 +62,7 @@ fmt:
 .PHONY: md-check
 md-check:
 	@docker pull zemanlx/remark-lint:0.2.0 >/dev/null
+	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/markdown/.remarkrc.yaml > .remarkrc.yaml
 	@docker run --rm -i -v $(PWD):/lint/input:ro zemanlx/remark-lint:0.2.0 --frail .
 
 .PHONY: package
