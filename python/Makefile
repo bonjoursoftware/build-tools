@@ -1,4 +1,9 @@
 BUILD_TOOL = $(shell (test -s poetry.lock && echo "poetry") || (test -s Pipfile.lock && echo "pipenv"))
+
+ifeq ($(BUILD_TOOL),)
+$(error Unsupported build tool, project must use Poetry or Pipenv for Bonjour Software Limited build-tools to work)
+endif
+
 PYTHON_VERSION ?= $(shell head -1 .python-version)
 PROJECT_NAME ?= $(shell basename $$(pwd))
 BUILD_TOOL_TAG ?= bonjoursoftware/$(PROJECT_NAME):$(BUILD_TOOL)
@@ -7,12 +12,33 @@ SRC_DIR ?= $(PROJECT_NAME)
 
 RUN = docker run --rm $(BUILD_TOOL_TAG)
 
-ifeq ($(BUILD_TOOL),)
-$(error Unsupported build tool, project must use Poetry or Pipenv for this to work)
-endif
+.PHONY: help
+help:
+	@echo "Bonjour Software Limited build-tools for Python - https://github.com/bonjoursoftware/build-tools/"
+	@echo ""
+	@echo "Make targets:"
+	@echo "- all-checks: alias for 'code-check fmt-check md-check test'"
+	@echo "- code-check: check code style with flake8 and static typing with mypy"
+	@echo "- debug     : print Makefile config"
+	@echo "- fmt       : format code with black"
+	@echo "- fmt-check : check code formatting with black"
+	@echo "- help      : print this manual"
+	@echo "- md-check  : check markdown formatting with remark"
+	@echo "- package   : package the Python application in a container"
+	@echo "- test      : run the test suite with pytest and check coverage with pytest-cov"
 
-.PHONY: all
-all: fmt-check test static-analysis md-check package
+.PHONY: all-checks
+all-checks: code-check fmt-check md-check test
+
+.PHONY: build-tool
+build-tool:
+	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/python/$(BUILD_TOOL).Dockerfile | docker build \
+		--build-arg PYTHON_VERSION=$(PYTHON_VERSION) \
+		--tag $(BUILD_TOOL_TAG) \
+		-f- . > /dev/null
+
+.PHONY: code-check
+code-check: flake8 mypy
 
 .PHONY: debug
 debug:
@@ -23,41 +49,17 @@ debug:
 	@echo "LOCAL_TAG=$(LOCAL_TAG)"
 	@echo "SRC_DIR=$(SRC_DIR)"
 
-.PHONY: docker-build
-docker-build:
-	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/python/$(BUILD_TOOL).Dockerfile | docker build \
-		--build-arg PYTHON_VERSION=$(PYTHON_VERSION) \
-		--tag $(BUILD_TOOL_TAG) \
-		-f- . > /dev/null
-
-.PHONY: fmt-check
-fmt-check: docker-build
-	@$(RUN) black --line-length 120 --check .
-
-.PHONY: test
-test: docker-build
-	@$(RUN) pytest \
-		-v \
-		-p no:cacheprovider \
-		--no-header \
-		--cov=$(SRC_DIR) \
-		--cov-fail-under=100 \
-		--no-cov-on-fail
-
-.PHONY: static-analysis
-static-analysis: flake8 mypy
-
 .PHONY: flake8
-flake8: docker-build
+flake8: build-tool
 	@$(RUN) flake8 --max-line-length 120
-
-.PHONY: mypy
-mypy: docker-build
-	@$(RUN) mypy --strict ./**/*.py
 
 .PHONY: fmt
 fmt:
 	@$(BUILD_TOOL) run black --line-length 120 .
+
+.PHONY: fmt-check
+fmt-check: build-tool
+	@$(RUN) black --line-length 120 --check .
 
 .PHONY: md-check
 md-check:
@@ -65,9 +67,23 @@ md-check:
 	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/markdown/.remarkrc.yaml > .remarkrc.yaml
 	@docker run --rm -i -v $(PWD):/lint/input:ro zemanlx/remark-lint:0.2.0 --frail .
 
+.PHONY: mypy
+mypy: build-tool
+	@$(RUN) mypy --strict ./**/*.py
+
 .PHONY: package
 package:
 	@docker build \
 		--build-arg PYTHON_VERSION=$(PYTHON_VERSION) \
 		--tag $(LOCAL_TAG) \
 		. > /dev/null
+
+.PHONY: test
+test: build-tool
+	@$(RUN) pytest \
+		-v \
+		-p no:cacheprovider \
+		--no-header \
+		--cov=$(SRC_DIR) \
+		--cov-fail-under=100 \
+		--no-cov-on-fail
