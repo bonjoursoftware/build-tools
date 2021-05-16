@@ -57,7 +57,7 @@ mypy: docker-build
 
 .PHONY: fmt
 fmt:
-	@pipenv run black --line-length 120 .
+	@$(BUILD_TOOL) run black --line-length 120 .
 
 .PHONY: md-check
 md-check:
