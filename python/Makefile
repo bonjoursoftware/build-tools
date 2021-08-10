@@ -35,6 +35,7 @@ build-tool:
 	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/python/$(BUILD_TOOL).Dockerfile | docker build \
 		--build-arg PYTHON_VERSION=$(PYTHON_VERSION) \
 		--tag $(BUILD_TOOL_TAG) \
+		--target $(BUILD_TOOL) \
 		-f- . > /dev/null
 
 .PHONY: code-check
@@ -73,10 +74,11 @@ mypy: build-tool
 
 .PHONY: package
 package:
-	@docker build \
+	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/python/$(BUILD_TOOL).Dockerfile | docker build \
 		--build-arg PYTHON_VERSION=$(PYTHON_VERSION) \
+		--build-arg PROJECT_NAME=$(PROJECT_NAME) \
 		--tag $(LOCAL_TAG) \
-		. > /dev/null
+		-f- . > /dev/null
 
 .PHONY: test
 test: build-tool
