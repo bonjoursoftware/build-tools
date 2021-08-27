@@ -88,4 +88,5 @@ test: build-tool
 		--no-header \
 		--cov=$(SRC_DIR) \
 		--cov-fail-under=100 \
+		--cov-report term-missing \
 		--no-cov-on-fail
