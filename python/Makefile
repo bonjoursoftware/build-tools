@@ -70,7 +70,7 @@ md-check:
 
 .PHONY: mypy
 mypy: build-tool
-	@$(RUN) mypy --strict ./**/*.py
+	@$(RUN) mypy --strict $(SRC_DIR) tests
 
 .PHONY: package
 package:
