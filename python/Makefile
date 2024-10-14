@@ -52,15 +52,15 @@ debug:
 
 .PHONY: flake8
 flake8: build-tool
-	@$(RUN) flake8 --max-line-length 120
+	@$(RUN) flake8 --max-line-length 160
 
 .PHONY: fmt
 fmt:
-	@$(BUILD_TOOL) run black --line-length 120 .
+	@$(BUILD_TOOL) run black --line-length 160 .
 
 .PHONY: fmt-check
 fmt-check: build-tool
-	@$(RUN) black --line-length 120 --check .
+	@$(RUN) black --line-length 160 --check .
 
 .PHONY: md-check
 md-check:
