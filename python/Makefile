@@ -60,7 +60,7 @@ fmt:
 
 .PHONY: fmt-check
 fmt-check: build-tool
-	@$(RUN) black --line-length 160 --check .
+	@$(RUN) black --line-length 160 --check . --exclude venv
 
 .PHONY: md-check
 md-check:
