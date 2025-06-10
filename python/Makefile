@@ -52,7 +52,7 @@ debug:
 
 .PHONY: flake8
 flake8: build-tool
-	@$(RUN) flake8 --max-line-length 160
+	@$(RUN) flake8 --max-line-length 160 --exclude venv
 
 .PHONY: fmt
 fmt:
