@@ -66,6 +66,7 @@ fmt-check: build-tool
 md-check:
 	@docker pull zemanlx/remark-lint:0.2.0 >/dev/null
 	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/markdown/.remarkrc.yaml > .remarkrc.yaml
+	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/markdown/.remarkignore > .remarkignore
 	@docker run --rm -i -v $(PWD):/lint/input:ro zemanlx/remark-lint:0.2.0 --frail .
 
 .PHONY: mypy
