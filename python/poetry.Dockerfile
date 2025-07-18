@@ -14,7 +14,7 @@ WORKDIR /${PROJECT_NAME}
 RUN pip install --no-cache-dir poetry==2.1.3
 COPY ./pyproject.toml ./poetry.lock ./
 RUN poetry config virtualenvs.in-project true --local \
-    && poetry install --no-dev \
+    && poetry install --only main \
     && poetry cache clear pypi --all --no-interaction
 
 FROM python:${PYTHON_VERSION}-slim
