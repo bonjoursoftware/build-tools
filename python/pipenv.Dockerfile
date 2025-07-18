@@ -1,5 +1,5 @@
 ARG PYTHON_VERSION
-FROM python:${PYTHON_VERSION}-slim as pipenv
+FROM python:${PYTHON_VERSION}-slim AS pipenv
 WORKDIR /src
 RUN pip install pipenv==2021.5.29
 COPY ./Pipfile.lock ./
@@ -8,7 +8,7 @@ COPY ./ ./
 ENTRYPOINT ["pipenv", "run"]
 
 ARG PYTHON_VERSION
-FROM python:${PYTHON_VERSION}-slim as builder
+FROM python:${PYTHON_VERSION}-slim AS builder
 ARG PROJECT_NAME
 WORKDIR /${PROJECT_NAME}
 RUN pip install --no-cache-dir pipenv==2021.5.29

@@ -1,5 +1,5 @@
 ARG PYTHON_VERSION
-FROM python:${PYTHON_VERSION}-slim as poetry
+FROM python:${PYTHON_VERSION}-slim AS poetry
 WORKDIR /src
 RUN pip install poetry==1.5.0
 COPY ./pyproject.toml ./poetry.lock ./
@@ -8,7 +8,7 @@ COPY ./ ./
 ENTRYPOINT ["poetry", "run"]
 
 ARG PYTHON_VERSION
-FROM python:${PYTHON_VERSION}-slim as builder
+FROM python:${PYTHON_VERSION}-slim AS builder
 ARG PROJECT_NAME
 WORKDIR /${PROJECT_NAME}
 RUN pip install --no-cache-dir poetry==1.5.0
