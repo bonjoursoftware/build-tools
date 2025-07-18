@@ -1,5 +1,5 @@
 ARG PYTHON_VERSION
-FROM python:${PYTHON_VERSION}-slim-buster as poetry
+FROM python:${PYTHON_VERSION}-slim as poetry
 WORKDIR /src
 RUN pip install poetry==1.5.0
 COPY ./pyproject.toml ./poetry.lock ./
@@ -8,7 +8,7 @@ COPY ./ ./
 ENTRYPOINT ["poetry", "run"]
 
 ARG PYTHON_VERSION
-FROM python:${PYTHON_VERSION}-slim-buster as builder
+FROM python:${PYTHON_VERSION}-slim as builder
 ARG PROJECT_NAME
 WORKDIR /${PROJECT_NAME}
 RUN pip install --no-cache-dir poetry==1.5.0
@@ -17,7 +17,7 @@ RUN poetry config virtualenvs.in-project true --local \
     && poetry install --no-dev \
     && poetry cache clear pypi --all --no-interaction
 
-FROM python:${PYTHON_VERSION}-slim-buster
+FROM python:${PYTHON_VERSION}-slim
 ARG PROJECT_NAME
 RUN useradd --create-home ${PROJECT_NAME}
 WORKDIR /home/${PROJECT_NAME}

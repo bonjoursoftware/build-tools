@@ -1,5 +1,5 @@
 ARG PYTHON_VERSION
-FROM python:${PYTHON_VERSION}-slim-buster as pipenv
+FROM python:${PYTHON_VERSION}-slim as pipenv
 WORKDIR /src
 RUN pip install pipenv==2021.5.29
 COPY ./Pipfile.lock ./
@@ -8,14 +8,14 @@ COPY ./ ./
 ENTRYPOINT ["pipenv", "run"]
 
 ARG PYTHON_VERSION
-FROM python:${PYTHON_VERSION}-slim-buster as builder
+FROM python:${PYTHON_VERSION}-slim as builder
 ARG PROJECT_NAME
 WORKDIR /${PROJECT_NAME}
 RUN pip install --no-cache-dir pipenv==2021.5.29
 COPY ./Pipfile.lock ./
 RUN PIPENV_VENV_IN_PROJECT=1 pipenv sync
 
-FROM python:${PYTHON_VERSION}-slim-buster
+FROM python:${PYTHON_VERSION}-slim
 ARG PROJECT_NAME
 RUN useradd --create-home ${PROJECT_NAME}
 WORKDIR /home/${PROJECT_NAME}
