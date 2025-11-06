@@ -1,7 +1,7 @@
 ARG PYTHON_VERSION
 FROM python:${PYTHON_VERSION}-slim AS poetry
 WORKDIR /src
-RUN pip install poetry==2.1.3
+RUN pip install poetry==2.2.1
 COPY ./pyproject.toml ./poetry.lock ./
 RUN poetry install
 COPY ./ ./
@@ -11,7 +11,7 @@ ARG PYTHON_VERSION
 FROM python:${PYTHON_VERSION}-slim AS builder
 ARG PROJECT_NAME
 WORKDIR /${PROJECT_NAME}
-RUN pip install --no-cache-dir poetry==2.1.3
+RUN pip install --no-cache-dir poetry==2.2.1
 COPY ./pyproject.toml ./poetry.lock ./
 RUN poetry config virtualenvs.in-project true --local \
     && poetry install --only main \

@@ -1,7 +1,7 @@
 ARG PYTHON_VERSION
 FROM python:${PYTHON_VERSION}-slim AS pipenv
 WORKDIR /src
-RUN pip install pipenv==2021.5.29
+RUN pip install pipenv==2025.0.4
 COPY ./Pipfile.lock ./
 RUN pipenv sync --dev
 COPY ./ ./
@@ -11,7 +11,7 @@ ARG PYTHON_VERSION
 FROM python:${PYTHON_VERSION}-slim AS builder
 ARG PROJECT_NAME
 WORKDIR /${PROJECT_NAME}
-RUN pip install --no-cache-dir pipenv==2021.5.29
+RUN pip install --no-cache-dir pipenv==2025.0.4
 COPY ./Pipfile.lock ./
 RUN PIPENV_VENV_IN_PROJECT=1 pipenv sync
 
