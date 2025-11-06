@@ -30,10 +30,6 @@ help:
 .PHONY: all-checks
 all-checks: code-check fmt-check md-check test
 
-.PHONY: get-dockerfile
-get-dockerfile:
-	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/python/$(BUILD_TOOL).Dockerfile > Dockerfile
-
 .PHONY: build
 build:
 	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/python/$(BUILD_TOOL).Dockerfile | docker build \
@@ -41,10 +37,6 @@ build:
 		--tag $(BUILD_TOOL_TAG) \
 		--target $(BUILD_TOOL) \
 		-f- . > /dev/null
-
-.PHONY: build-tool
-build-tool:
-	@echo "$(BUILD_TOOL)"
 
 .PHONY: code-check
 code-check: flake8 mypy
@@ -69,6 +61,18 @@ fmt:
 .PHONY: fmt-check
 fmt-check: build
 	@$(RUN) black --line-length 160 --check . --exclude venv
+
+.PHONY: get-dockerfile
+get-dockerfile:
+	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/python/$(BUILD_TOOL).Dockerfile > Dockerfile
+
+.PHONY: get-project-name
+get-project-name:
+	@echo "$(PROJECT_NAME)"
+
+.PHONY: get-python-version
+get-python-version:
+	@echo "$(PYTHON_VERSION)"
 
 .PHONY: md-check
 md-check:
