@@ -30,6 +30,10 @@ help:
 .PHONY: all-checks
 all-checks: code-check fmt-check md-check test
 
+.PHONY: get-dockerfile
+get-dockerfile:
+	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/python/$(BUILD_TOOL).Dockerfile > Dockerfile
+
 .PHONY: build
 build:
 	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/python/$(BUILD_TOOL).Dockerfile | docker build \
