@@ -30,13 +30,17 @@ help:
 .PHONY: all-checks
 all-checks: code-check fmt-check md-check test
 
-.PHONY: build-tool
-build-tool:
+.PHONY: build
+build:
 	@curl -fsL https://github.com/bonjoursoftware/build-tools/raw/main/python/$(BUILD_TOOL).Dockerfile | docker build \
 		--build-arg PYTHON_VERSION=$(PYTHON_VERSION) \
 		--tag $(BUILD_TOOL_TAG) \
 		--target $(BUILD_TOOL) \
 		-f- . > /dev/null
+
+.PHONY: build-tool
+build-tool:
+	@echo "$(BUILD_TOOL)"
 
 .PHONY: code-check
 code-check: flake8 mypy
@@ -51,7 +55,7 @@ debug:
 	@echo "SRC_DIR=$(SRC_DIR)"
 
 .PHONY: flake8
-flake8: build-tool
+flake8: build
 	@$(RUN) flake8 --max-line-length 160 --exclude venv
 
 .PHONY: fmt
@@ -59,7 +63,7 @@ fmt:
 	@$(BUILD_TOOL) run black --line-length 160 .
 
 .PHONY: fmt-check
-fmt-check: build-tool
+fmt-check: build
 	@$(RUN) black --line-length 160 --check . --exclude venv
 
 .PHONY: md-check
@@ -70,7 +74,7 @@ md-check:
 	@docker run --rm -i -v $(PWD):/lint/input:ro zemanlx/remark-lint:0.2.0 --frail .
 
 .PHONY: mypy
-mypy: build-tool
+mypy: build
 	@$(RUN) mypy --strict $(SRC_DIR) tests
 
 .PHONY: package
@@ -82,7 +86,7 @@ package:
 		-f- . > /dev/null
 
 .PHONY: test
-test: build-tool
+test: build
 	@$(RUN) pytest \
 		-v \
 		-p no:cacheprovider \
