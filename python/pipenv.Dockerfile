@@ -1,4 +1,4 @@
-ARG PYTHON_VERSION
+ARG PYTHON_VERSION=3.14
 FROM python:${PYTHON_VERSION}-slim AS pipenv
 WORKDIR /src
 RUN pip install pipenv==2025.0.4
@@ -7,7 +7,7 @@ RUN pipenv sync --dev
 COPY ./ ./
 ENTRYPOINT ["pipenv", "run"]
 
-ARG PYTHON_VERSION
+ARG PYTHON_VERSION=3.14
 FROM python:${PYTHON_VERSION}-slim AS builder
 ARG PROJECT_NAME
 WORKDIR /${PROJECT_NAME}

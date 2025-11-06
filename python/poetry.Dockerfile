@@ -1,4 +1,4 @@
-ARG PYTHON_VERSION
+ARG PYTHON_VERSION=3.14
 FROM python:${PYTHON_VERSION}-slim AS poetry
 WORKDIR /src
 RUN pip install poetry==2.2.1
@@ -7,7 +7,7 @@ RUN poetry install
 COPY ./ ./
 ENTRYPOINT ["poetry", "run"]
 
-ARG PYTHON_VERSION
+ARG PYTHON_VERSION=3.14
 FROM python:${PYTHON_VERSION}-slim AS builder
 ARG PROJECT_NAME
 WORKDIR /${PROJECT_NAME}
